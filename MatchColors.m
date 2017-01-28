@@ -10,15 +10,32 @@
 @implementation MatchColors
 
 
+// Required Keys below, methods use NSMutableDictionary
+//
+NSString * const RED        = @"red";
+NSString * const GREEN      = @"green";
+NSString * const BLUE       = @"blue";
+NSString * const HUE        = @"hue";
+NSString * const SATURATION = @"saturation";
+NSString * const BRIGHTNESS = @"brightness";
+
+
+// Weights (for weighted diffs)
+//
+CGFloat const RED_WGT       = 0.30;
+CGFloat const GREEN_WGT     = 0.59;
+CGFloat const BLUE_WGT      = 0.11;
+
+
 // colorDiffByRGB - Apply the RGB diff algorithm (the smaller the return value the better the match)
 //
 // d = sqrt((r2-r1)^2 + (g2-g1)^2 + (b2-b1)^2) on RGB
 //
 + (float)colorDiffByRGB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                        pow(fabs([[mainDict valueForKey:@"red"]   floatValue] - [[compDict valueForKey:@"red"]   floatValue]),2) +
-                        pow(fabs([[mainDict valueForKey:@"green"] floatValue] - [[compDict valueForKey:@"green"] floatValue]),2) +
-                        pow(fabs([[mainDict valueForKey:@"blue"]  floatValue] - [[compDict valueForKey:@"blue"]  floatValue]),2)
+                        pow(fabs([[mainDict valueForKey:RED]   floatValue] - [[compDict valueForKey:RED]   floatValue]),2) +
+                        pow(fabs([[mainDict valueForKey:GREEN] floatValue] - [[compDict valueForKey:GREEN] floatValue]),2) +
+                        pow(fabs([[mainDict valueForKey:BLUE]  floatValue] - [[compDict valueForKey:BLUE]  floatValue]),2)
                     );
     
     return (float)diff;
@@ -30,9 +47,9 @@
 //
 + (float)colorDiffByHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:@"hue"]        floatValue] - [[compDict valueForKey:@"hue"]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"saturation"] floatValue] - [[compDict valueForKey:@"saturation"] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"brightness"] floatValue] - [[compDict valueForKey:@"brightness"] floatValue]),2)
+                       pow(fabs([[mainDict valueForKey:HUE]        floatValue] - [[compDict valueForKey:HUE]        floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:SATURATION] floatValue] - [[compDict valueForKey:SATURATION] floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:BRIGHTNESS] floatValue] - [[compDict valueForKey:BRIGHTNESS] floatValue]),2)
                     );
     
     return (float)diff;
@@ -44,10 +61,10 @@
 //
 + (float)colorDiffByRGBAndHue:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:@"red"]   floatValue] - [[compDict valueForKey:@"red"]   floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"green"] floatValue] - [[compDict valueForKey:@"green"] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"blue"]  floatValue] - [[compDict valueForKey:@"blue"]  floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"hue"]   floatValue] - [[compDict valueForKey:@"hue"]   floatValue]),2)
+                       pow(fabs([[mainDict valueForKey:RED]   floatValue] - [[compDict valueForKey:RED]   floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:GREEN] floatValue] - [[compDict valueForKey:GREEN] floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:BLUE]  floatValue] - [[compDict valueForKey:BLUE]  floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:HUE]   floatValue] - [[compDict valueForKey:HUE]   floatValue]),2)
                     );
     
     return (float)diff;
@@ -59,12 +76,12 @@
 //
 + (float)colorDiffByRGBAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:@"red"]        floatValue] - [[compDict valueForKey:@"red"]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"green"]      floatValue] - [[compDict valueForKey:@"green"]      floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"blue"]       floatValue] - [[compDict valueForKey:@"blue"]       floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"hue"]        floatValue] - [[compDict valueForKey:@"hue"]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"saturation"] floatValue] - [[compDict valueForKey:@"saturation"] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"brightness"] floatValue] - [[compDict valueForKey:@"brightness"] floatValue]),2)
+                       pow(fabs([[mainDict valueForKey:RED]        floatValue] - [[compDict valueForKey:RED]        floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:GREEN]      floatValue] - [[compDict valueForKey:GREEN]      floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:BLUE]       floatValue] - [[compDict valueForKey:BLUE]       floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:HUE]        floatValue] - [[compDict valueForKey:HUE]        floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:SATURATION] floatValue] - [[compDict valueForKey:SATURATION] floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:BRIGHTNESS] floatValue] - [[compDict valueForKey:BRIGHTNESS] floatValue]),2)
                        );
     
     return (float)diff;
@@ -78,9 +95,9 @@
 //
 + (float)colorDiffByRGBW:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                       pow((fabs([[mainDict valueForKey:@"red"]   floatValue] - [[compDict valueForKey:@"red"]   floatValue]) * 0.30),2) +
-                       pow((fabs([[mainDict valueForKey:@"green"] floatValue] - [[compDict valueForKey:@"green"] floatValue]) * 0.59),2) +
-                       pow((fabs([[mainDict valueForKey:@"blue"]  floatValue] - [[compDict valueForKey:@"blue"]  floatValue]) * 0.11),2)
+                       pow((fabs([[mainDict valueForKey:RED]   floatValue] - [[compDict valueForKey:RED]   floatValue]) * RED_WGT),  2) +
+                       pow((fabs([[mainDict valueForKey:GREEN] floatValue] - [[compDict valueForKey:GREEN] floatValue]) * GREEN_WGT),2) +
+                       pow((fabs([[mainDict valueForKey:BLUE]  floatValue] - [[compDict valueForKey:BLUE]  floatValue]) * BLUE_WGT), 2)
                        );
     
     return (float)diff;
@@ -95,12 +112,12 @@
 //
 + (float)colorDiffByRGBWAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                       pow((fabs([[mainDict valueForKey:@"red"]       floatValue] - [[compDict valueForKey:@"red"]        floatValue]) * 0.30),2) +
-                       pow((fabs([[mainDict valueForKey:@"green"]     floatValue] - [[compDict valueForKey:@"green"]      floatValue]) * 0.59),2) +
-                       pow((fabs([[mainDict valueForKey:@"blue"]      floatValue] - [[compDict valueForKey:@"blue"]       floatValue]) * 0.11),2) +
-                       pow(fabs([[mainDict valueForKey:@"hue"]        floatValue] - [[compDict valueForKey:@"hue"]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"saturation"] floatValue] - [[compDict valueForKey:@"saturation"] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:@"brightness"] floatValue] - [[compDict valueForKey:@"brightness"] floatValue]),2)
+                       pow((fabs([[mainDict valueForKey:RED]       floatValue] - [[compDict valueForKey:RED]        floatValue]) * RED_WGT),  2) +
+                       pow((fabs([[mainDict valueForKey:GREEN]     floatValue] - [[compDict valueForKey:GREEN]      floatValue]) * GREEN_WGT),2) +
+                       pow((fabs([[mainDict valueForKey:BLUE]      floatValue] - [[compDict valueForKey:BLUE]       floatValue]) * BLUE_WGT), 2) +
+                       pow(fabs([[mainDict valueForKey:HUE]        floatValue] - [[compDict valueForKey:HUE]        floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:SATURATION] floatValue] - [[compDict valueForKey:SATURATION] floatValue]),2) +
+                       pow(fabs([[mainDict valueForKey:BRIGHTNESS] floatValue] - [[compDict valueForKey:BRIGHTNESS] floatValue]),2)
                        );
     
     return (float)diff;
@@ -112,7 +129,7 @@
 //
 + (float)colorDiffByHue:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:@"hue"]   floatValue] - [[compDict valueForKey:@"hue"]   floatValue]),2)
+                       pow(fabs([[mainDict valueForKey:HUE]   floatValue] - [[compDict valueForKey:HUE]   floatValue]),2)
                        );
     
     return (float)diff;
