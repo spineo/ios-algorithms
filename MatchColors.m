@@ -89,9 +89,9 @@ CGFloat const BLUE_WGT      = 0.11;
 
 // colorDiffByRGBW - Weighted on RGB only
 //
-// d = ((r2-r1)*0.30)^2
-//  + ((g2-g1)*0.59)^2
-//  + ((b2-b1)*0.11)^2
+// d = ((r2-r1)*RED_WGT)^2
+//  + ((g2-g1)*GREEN_WGT)^2
+//  + ((b2-b1)*BLUE_WGT)^2
 //
 + (float)colorDiffByRGBW:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     double diff = sqrt(
@@ -105,9 +105,9 @@ CGFloat const BLUE_WGT      = 0.11;
 
 // colorDiffByRGBWAndHSB - Weighted on RGB + HSB
 //
-// d = ((r2-r1)*0.30)^2
-//  + ((g2-g1)*0.59)^2
-//  + ((b2-b1)*0.11)^2
+// d = ((r2-r1)*RED_WGT)^2
+//  + ((g2-g1)*GREEN_WGT)^2
+//  + ((b2-b1)*BLUE_WGT)^2
 // Plus HSB diff
 //
 + (float)colorDiffByRGBWAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
