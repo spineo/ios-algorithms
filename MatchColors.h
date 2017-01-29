@@ -11,18 +11,20 @@
 
 @interface MatchColors : NSObject
 
-+ (float)colorDiffByRGB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (void)init:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
 
-+ (float)colorDiffByHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (float)colorDiffByRGB;
 
-+ (float)colorDiffByRGBAndHue:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (float)colorDiffByHSB;
 
-+ (float)colorDiffByRGBAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (float)colorDiffByRGBAndHue;
 
-+ (float)colorDiffByRGBW:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (float)colorDiffByRGBAndHSB;
 
-+ (float)colorDiffByRGBWAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (float)colorDiffByRGBW;
 
-+ (float)colorDiffByHue:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (float)colorDiffByRGBWAndHSB;
+
+- (float)colorDiffByHue;
 
 @end

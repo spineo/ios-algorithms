@@ -7,6 +7,12 @@
 //
 #import "MatchColors.h"
 
+@interface MatchColors ()
+
+@property (nonatomic, strong) NSMutableDictionary *mainDict, *compDict;
+
+@end
+
 @implementation MatchColors
 
 
@@ -26,65 +32,52 @@ CGFloat const RED_WGT       = 0.30;
 CGFloat const GREEN_WGT     = 0.59;
 CGFloat const BLUE_WGT      = 0.11;
 
+// init - Set the two Mutable Dictionaries
+//
+- (void)init:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
+    [self setMainDict:mainDict];
+    [self setCompDict:compDict];
+}
 
 // colorDiffByRGB - Apply the RGB diff algorithm (the smaller the return value the better the match)
 //
 // d = sqrt((r2-r1)^2 + (g2-g1)^2 + (b2-b1)^2) on RGB
 //
-+ (float)colorDiffByRGB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                        pow(fabs([[mainDict valueForKey:RED]   floatValue] - [[compDict valueForKey:RED]   floatValue]),2) +
-                        pow(fabs([[mainDict valueForKey:GREEN] floatValue] - [[compDict valueForKey:GREEN] floatValue]),2) +
-                        pow(fabs([[mainDict valueForKey:BLUE]  floatValue] - [[compDict valueForKey:BLUE]  floatValue]),2)
-                    );
-    
-    return (float)diff;
+- (float)colorDiffByRGB {
+    return (float)sqrt(
+                       [self compDiff:RED] + [self compDiff:GREEN] + [self compDiff:BLUE]
+                       );
 }
 
 // colorDiffByHSB - Apply the HSB diff algorithm
 //
 // d = sqrt((h2-h1)^2 + (s2-s1)^2 + (b2-b1)^2) on HSB
 //
-+ (float)colorDiffByHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:HUE]        floatValue] - [[compDict valueForKey:HUE]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:SATURATION] floatValue] - [[compDict valueForKey:SATURATION] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:BRIGHTNESS] floatValue] - [[compDict valueForKey:BRIGHTNESS] floatValue]),2)
-                    );
-    
-    return (float)diff;
+- (float)colorDiffByHSB {
+    return (float)sqrt(
+                       [self compDiff:HUE] + [self compDiff:SATURATION] + [self compDiff:BRIGHTNESS]
+                       );
 }
 
 // colorDiffByRGBAndHue - Apply the HSB and Hue diff algorithm
 //
 // d = sqrt((r2-r1)^2 + (g2-g1)^2 + (b2-b1)^2 + (h2-h1)^2) on RGB + Hue
 //
-+ (float)colorDiffByRGBAndHue:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:RED]   floatValue] - [[compDict valueForKey:RED]   floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:GREEN] floatValue] - [[compDict valueForKey:GREEN] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:BLUE]  floatValue] - [[compDict valueForKey:BLUE]  floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:HUE]   floatValue] - [[compDict valueForKey:HUE]   floatValue]),2)
-                    );
-    
-    return (float)diff;
+- (float)colorDiffByRGBAndHue {
+    return (float)sqrt(
+                       [self compDiff:RED] + [self compDiff:GREEN] + [self compDiff:BLUE] + [self compDiff:HUE]
+                       );
 }
 
 // colorDiffByRGBAndHue - Apply the HSB and Hue diff algorithm
 //
 // d = sqrt((r2-r1)^2 + (g2-g1)^2 + (b2-b1)^2 + (h2-h1)^2 + (s2-s1)^2 + (br2-br1)^2) on RGB + HSB
 //
-+ (float)colorDiffByRGBAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:RED]        floatValue] - [[compDict valueForKey:RED]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:GREEN]      floatValue] - [[compDict valueForKey:GREEN]      floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:BLUE]       floatValue] - [[compDict valueForKey:BLUE]       floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:HUE]        floatValue] - [[compDict valueForKey:HUE]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:SATURATION] floatValue] - [[compDict valueForKey:SATURATION] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:BRIGHTNESS] floatValue] - [[compDict valueForKey:BRIGHTNESS] floatValue]),2)
+- (float)colorDiffByRGBAndHSB {
+    return (float)sqrt(
+                       [self compDiff:RED] + [self compDiff:GREEN] + [self compDiff:BLUE] +
+                       [self compDiff:HUE] + [self compDiff:SATURATION] + [self compDiff:BRIGHTNESS]
                        );
-    
-    return (float)diff;
 }
 
 // colorDiffByRGBW - Weighted on RGB only
@@ -93,14 +86,10 @@ CGFloat const BLUE_WGT      = 0.11;
 //  + ((g2-g1)*GREEN_WGT)^2
 //  + ((b2-b1)*BLUE_WGT)^2
 //
-+ (float)colorDiffByRGBW:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                       pow((fabs([[mainDict valueForKey:RED]   floatValue] - [[compDict valueForKey:RED]   floatValue]) * RED_WGT),  2) +
-                       pow((fabs([[mainDict valueForKey:GREEN] floatValue] - [[compDict valueForKey:GREEN] floatValue]) * GREEN_WGT),2) +
-                       pow((fabs([[mainDict valueForKey:BLUE]  floatValue] - [[compDict valueForKey:BLUE]  floatValue]) * BLUE_WGT), 2)
+- (float)colorDiffByRGBW {
+    return (float)sqrt(
+                       [self compDiffWgt:RED weight:RED_WGT] + [self compDiffWgt:GREEN weight:GREEN_WGT] + [self compDiffWgt:BLUE weight:BLUE_WGT]
                        );
-    
-    return (float)diff;
 }
 
 // colorDiffByRGBWAndHSB - Weighted on RGB + HSB
@@ -110,29 +99,33 @@ CGFloat const BLUE_WGT      = 0.11;
 //  + ((b2-b1)*BLUE_WGT)^2
 // Plus HSB diff
 //
-+ (float)colorDiffByRGBWAndHSB:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                       pow((fabs([[mainDict valueForKey:RED]       floatValue] - [[compDict valueForKey:RED]        floatValue]) * RED_WGT),  2) +
-                       pow((fabs([[mainDict valueForKey:GREEN]     floatValue] - [[compDict valueForKey:GREEN]      floatValue]) * GREEN_WGT),2) +
-                       pow((fabs([[mainDict valueForKey:BLUE]      floatValue] - [[compDict valueForKey:BLUE]       floatValue]) * BLUE_WGT), 2) +
-                       pow(fabs([[mainDict valueForKey:HUE]        floatValue] - [[compDict valueForKey:HUE]        floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:SATURATION] floatValue] - [[compDict valueForKey:SATURATION] floatValue]),2) +
-                       pow(fabs([[mainDict valueForKey:BRIGHTNESS] floatValue] - [[compDict valueForKey:BRIGHTNESS] floatValue]),2)
+- (float)colorDiffByRGBWAndHSB {
+    return (float)sqrt(
+                       [self compDiffWgt:RED weight:RED_WGT] + [self compDiffWgt:GREEN weight:GREEN_WGT] + [self compDiffWgt:BLUE weight:BLUE_WGT] +
+                       [self compDiff:HUE] + [self compDiff:SATURATION] + [self compDiff:BRIGHTNESS]
                        );
-    
-    return (float)diff;
 }
-
+;
 // colorDiffByHue - Diff by Hue only
 //
 // d = sqrt((h2-h1)^2)
 //
-+ (float)colorDiffByHue:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
-    double diff = sqrt(
-                       pow(fabs([[mainDict valueForKey:HUE]   floatValue] - [[compDict valueForKey:HUE]   floatValue]),2)
+- (float)colorDiffByHue {
+    return (float)sqrt(
+                       [self compDiff:HUE]
                        );
-    
-    return (float)diff;
+}
+
+// compDiff - Compute the difference
+//
+- (double)compDiff:(NSString *)color {
+    return pow(fabs([[self.mainDict valueForKey:color] floatValue] - [[self.compDict valueForKey:color] floatValue]),2);
+}
+
+// compDiffWgt - Compute the difference with Weighted values added
+//
+- (double)compDiffWgt:(NSString *)color weight:(CGFloat)weight {
+    return pow((fabs([[self.mainDict valueForKey:color] floatValue] - [[self.compDict valueForKey:color] floatValue]) * weight),2);
 }
 
 @end
