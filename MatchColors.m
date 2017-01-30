@@ -32,9 +32,10 @@ CGFloat const RED_WGT       = 0.30;
 CGFloat const GREEN_WGT     = 0.59;
 CGFloat const BLUE_WGT      = 0.11;
 
+
 // init - Set the two Mutable Dictionaries
 //
-- (void)init:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
+- (void)setDict:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict {
     [self setMainDict:mainDict];
     [self setCompDict:compDict];
 }
@@ -105,7 +106,7 @@ CGFloat const BLUE_WGT      = 0.11;
                        [self compDiff:HUE] + [self compDiff:SATURATION] + [self compDiff:BRIGHTNESS]
                        );
 }
-;
+
 // colorDiffByHue - Diff by Hue only
 //
 // d = sqrt((h2-h1)^2)

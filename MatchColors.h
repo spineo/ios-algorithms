@@ -11,7 +11,7 @@
 
 @interface MatchColors : NSObject
 
-- (void)init:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
+- (void)setDict:(NSMutableDictionary *)mainDict compDict:(NSMutableDictionary *)compDict;
 
 - (float)colorDiffByRGB;
 
