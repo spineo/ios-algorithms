@@ -1,2 +1,2 @@
 # ios-algorithms
-Objective C Algorithms Supporting AppDevelopment 
+Objective-C Algorithms Supporting App Development 
